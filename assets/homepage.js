@@ -32,14 +32,11 @@ function getCityInfo(cityVal) {
 		"https://api.openweathermap.org/geo/1.0/direct?q=" +
 		cityVal +
 		"&limit=1&appid=fb5c304891d2b1e1a743b0141bed0085";
-	// console.log("test" + cityNameEl.value);
 
 	fetch(apiUrl).then(function (response) {
 		//request was successful
 		if (response.ok) {
 			response.json().then(function (data) {
-				// console.log(data[0].lat + " " + data[0].lon);
-				console.log(data);
 				let name = data[0].name;
 				getWeatherInfo(data[0].lat, data[0].lon, name);
 			});
@@ -96,15 +93,9 @@ function DisplayWeather(data, name) {
 
 	var currentUvEl = document.querySelector("#current-uv");
 	currentUvEl.textContent = "UV Index: " + data.current.uvi;
-
-	console.log("display weather function->" + cityNameEl.value);
 }
 
 function DisplayFiveDay(data) {
-	//clear previous city info
-	// dailyForecastEl.value = "";
-	// const fiveDayForecast = [data.daily];
-
 	for (let i = 0; i <= 4; i++) {
 		var dayEl = document.querySelector("#day-" + (i + 1));
 		dayEl.innerHTML = "";
@@ -140,10 +131,9 @@ function DisplayFiveDay(data) {
 
 // saveCityToStorage(cityVal);
 function saveCityToStorage(cityVal) {
-	console.log("save city function ->" + cityVal);
-	// pushmethod to array
+	// push method to array
 	myCities.push(cityVal);
-	console.log(myCities);
+
 	localStorage.setItem("city-name", JSON.stringify(myCities));
 	newCitiesButton(cityVal);
 }
@@ -153,18 +143,21 @@ function newCitiesButton(cityVal) {
 	const savedCitiesButton = document.createElement("button");
 	savedCitiesButton.className = "my-city-button";
 	savedCitiesButton.innerText = cityVal;
-
+	//need an if else(?) to prevent duplicate cities
 	placeButton.appendChild(savedCitiesButton);
-	console.log("button made");
 }
+
+// function clearMyCities() {
+// 	localStorage.clear();
+// 	placeButton.innerHTML = "";
+// 	window.location.reload;
+// }
 
 cityBtnEl.addEventListener("click", function () {
 	var cityVal = cityNameEl.value;
 	getCityInfo(cityVal);
 	saveCityToStorage(cityVal);
 	//clear input field
-
-	console.log(cityNameEl);
 });
 placeButton.addEventListener("click", function (event) {
 	var element = event.target;
@@ -173,4 +166,5 @@ placeButton.addEventListener("click", function (event) {
 		getCityInfo(cityVal);
 	}
 });
-//     <button id="[cityname]" class="savedCityBtn"></button>
+// var clearCities = document.querySelector("#clear-cities");
+// clearCities.addEventListener("click", clearMyCities);
