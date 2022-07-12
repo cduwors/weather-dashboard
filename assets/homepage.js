@@ -28,6 +28,12 @@ const getDate = () => {
 
 //format api url and get city lat & lon
 function getCityInfo(cityVal) {
+	if (myCities.indexOf(cityVal) !== -1) {
+		alert("City already saved in My Cities!");
+		cityNameEl = "";
+		return;
+	}
+
 	var apiUrl =
 		"https://api.openweathermap.org/geo/1.0/direct?q=" +
 		cityVal +
@@ -41,7 +47,7 @@ function getCityInfo(cityVal) {
 				getWeatherInfo(data[0].lat, data[0].lon, name);
 			});
 		} else {
-			alert("error - city not found");
+			alert("Error - city not found");
 		}
 	});
 }

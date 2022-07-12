@@ -12,7 +12,7 @@ A simple weather app for a traveler to see the weather outlook for multiple citi
 
 ## Screenshot
 
-<img src= "./assets/weather-dashboard.png/>
+<img src= "./assets/weather-db.png"/>
 
 ## Contact
 
