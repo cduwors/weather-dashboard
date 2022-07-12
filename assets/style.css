@@ -92,12 +92,20 @@ p {
 	border: 2px solid var(--tertiary-dark);
 	border-radius: var(--border-radius);
 	flex-wrap: wrap;
+	background-color: rgb(232, 240, 254);
 }
 
 .forecast-container {
 	flex-direction: row;
 	justify-content: left;
 	margin: 5px 0;
+}
+
+.day-forecast {
+	background-color: var(--tertiary-dark);
+	color: #fff;
+	margin: 5px;
+	padding: 10px;
 }
 
 /* HEIGHT / WIDTH UTILS */

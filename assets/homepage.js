@@ -3,6 +3,12 @@ var cityHighlightEl = document.querySelector("#city-highlight");
 var fiveDayEl = document.querySelector("#five-day");
 var cityBtnEl = document.querySelector("#cityBtn");
 var rightNow = moment().format("MM-DD-YYYY)");
+var myCities = [];
+
+// if local storage exists then myCities must equal the array
+// if localStorage.value;
+
+//else myCities = [];
 
 const getDate = () => {
 	const newDate = new Date();
@@ -21,13 +27,13 @@ function getCityInfo(cityVal) {
 		"https://api.openweathermap.org/geo/1.0/direct?q=" +
 		cityVal +
 		"&limit=1&appid=fb5c304891d2b1e1a743b0141bed0085";
-	console.log("test" + cityNameEl.value);
+	// console.log("test" + cityNameEl.value);
 
 	fetch(apiUrl).then(function (response) {
 		//request was successful
 		if (response.ok) {
 			response.json().then(function (data) {
-				console.log(data[0].lat + " " + data[0].lon);
+				// console.log(data[0].lat + " " + data[0].lon);
 				getWeatherInfo(data[0].lat, data[0].lon);
 			});
 		} else {
@@ -49,7 +55,7 @@ function getWeatherInfo(lat, lon) {
 	fetch(weatherApiUrl).then(function (response) {
 		if (response.ok) {
 			response.json().then(function (data) {
-				console.log(data);
+				console.log("fetch complete ->" + data);
 				DisplayWeather(data);
 				DisplayFiveDay(data);
 			});
@@ -83,7 +89,7 @@ function DisplayWeather(data) {
 	var currentUvEl = document.querySelector("#current-uv");
 	currentUvEl.textContent = "UV Index: " + data.current.uvi;
 
-	console.log(cityNameEl.value);
+	console.log("display weather function->" + cityNameEl.value);
 }
 
 function DisplayFiveDay(data) {
@@ -93,7 +99,7 @@ function DisplayFiveDay(data) {
 		var dayEl = document.querySelector("#day-" + (i + 1));
 
 		var forecastDateEl = document.createElement("p");
-		var newDate = moment(rightNow, "MM-DD-YYYY").add(i + 1, "d");
+		var newDate = moment(rightNow, "MM Do YYYY").add(i + 1, "d");
 		forecastDateEl.textContent = newDate;
 
 		var forecastImgEl = document.createElement("img");
@@ -110,7 +116,7 @@ function DisplayFiveDay(data) {
 		forecastWindEl.textContent = "Wind: " + data.daily[i].wind_speed + " MPH";
 
 		var forecastHumEl = document.createElement("p");
-		forecastHumEl.textContent = data.daily[i].humidity + " %";
+		forecastHumEl.textContent = "Humidity: " + data.daily[i].humidity + " %";
 
 		// forecastEl.textContent = getDate() + 1;
 		dayEl.appendChild(forecastDateEl);
@@ -124,20 +130,27 @@ function DisplayFiveDay(data) {
 cityBtnEl.addEventListener("click", function () {
 	var cityVal = cityNameEl.value;
 	getCityInfo(cityVal);
-
-
-
+	saveCityToStorage(cityVal);
 });
 
-	// saveCityToStorage(cityVal);
-    saveCityToStorage(cityVal) {
-        console.log(cityVal);
+// saveCityToStorage(cityVal);
+function saveCityToStorage(cityVal) {
+	console.log("save city function ->" + cityVal);
+	// pushmethod to array
+	myCities.push(cityVal);
+	console.log(myCities);
+	localStorage.setItem("city-name", JSON.stringify(myCities));
+	newCitiesButton();
+}
 
-        localStorage.setItem("city-name" , cityNameEl.value);
-        //createSavedCityBtn(cityVal);
-        var newMyCitiesButton = document.createElement("button").add(id="");
-        newMyCitiesButton.textContent = cityVal;
-
-    };
+//create a button for new search
+function newCitiesButton(cityVal) {
+	const savedCitiesButton = document.createElement("button");
+	savedCitiesButton.className = "my-city-button";
+	savedCitiesButton.innerText = cityVal;
+	var placeButton = document.getElementById("cities-container");
+	savedCitiesButton.appendChild(placeButton);
+	console.log("button made");
+}
 
 //     <button id="[cityname]" class="savedCityBtn"></button>
