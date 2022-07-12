@@ -3,10 +3,15 @@ var cityHighlightEl = document.querySelector("#city-highlight");
 var fiveDayEl = document.querySelector("#five-day");
 var cityBtnEl = document.querySelector("#cityBtn");
 var rightNow = moment().format("MM-DD-YYYY)");
-var myCities = [];
+var myCities = JSON.parse(localStorage.getItem("city-name")) || [];
+var dailyForecastEl = document.querySelector("#daily-forecast");
+var placeButton = document.getElementById("cities-container");
 
 // if local storage exists then myCities must equal the array
-// if localStorage.value;
+for (let i = 0; i < myCities.length; i++) {
+	var city = myCities[i];
+	newCitiesButton(city);
+}
 
 //else myCities = [];
 
@@ -34,7 +39,9 @@ function getCityInfo(cityVal) {
 		if (response.ok) {
 			response.json().then(function (data) {
 				// console.log(data[0].lat + " " + data[0].lon);
-				getWeatherInfo(data[0].lat, data[0].lon);
+				console.log(data);
+				let name = data[0].name;
+				getWeatherInfo(data[0].lat, data[0].lon, name);
 			});
 		} else {
 			alert("error - city not found");
@@ -44,7 +51,7 @@ function getCityInfo(cityVal) {
 
 // create span to hold city searched
 
-function getWeatherInfo(lat, lon) {
+function getWeatherInfo(lat, lon, name) {
 	var weatherApiUrl =
 		"https://api.openweathermap.org/data/2.5/onecall?lat=" +
 		lat +
@@ -55,9 +62,9 @@ function getWeatherInfo(lat, lon) {
 	fetch(weatherApiUrl).then(function (response) {
 		if (response.ok) {
 			response.json().then(function (data) {
-				console.log("fetch complete ->" + data);
-				DisplayWeather(data);
+				DisplayWeather(data, name);
 				DisplayFiveDay(data);
+				cityNameEl.value = "";
 			});
 		} else {
 			alert("lat and lon not found");
@@ -66,8 +73,9 @@ function getWeatherInfo(lat, lon) {
 }
 
 // function DisplayWeather {
-function DisplayWeather(data) {
+function DisplayWeather(data, name) {
 	//add city name to forecast-container > city-highlight
+
 	var weatherIcon = document.querySelector("#weather-icon");
 	weatherIcon.src =
 		"http://openweathermap.org/img/wn/" +
@@ -75,7 +83,7 @@ function DisplayWeather(data) {
 		"@2x.png";
 
 	var currentCityEl = document.querySelector("#current-city");
-	currentCityEl.textContent = cityNameEl.value + " " + getDate();
+	currentCityEl.textContent = name + " " + getDate();
 
 	var currentTempEl = document.querySelector("#current-temp");
 	currentTempEl.textContent = "Temp: " + data.current.temp + " degrees F";
@@ -93,10 +101,13 @@ function DisplayWeather(data) {
 }
 
 function DisplayFiveDay(data) {
+	//clear previous city info
+	// dailyForecastEl.value = "";
 	// const fiveDayForecast = [data.daily];
 
 	for (let i = 0; i <= 4; i++) {
 		var dayEl = document.querySelector("#day-" + (i + 1));
+		dayEl.innerHTML = "";
 
 		var forecastDateEl = document.createElement("p");
 		var newDate = moment(rightNow, "MM Do YYYY").add(i + 1, "d");
@@ -127,12 +138,6 @@ function DisplayFiveDay(data) {
 	}
 }
 
-cityBtnEl.addEventListener("click", function () {
-	var cityVal = cityNameEl.value;
-	getCityInfo(cityVal);
-	saveCityToStorage(cityVal);
-});
-
 // saveCityToStorage(cityVal);
 function saveCityToStorage(cityVal) {
 	console.log("save city function ->" + cityVal);
@@ -140,7 +145,7 @@ function saveCityToStorage(cityVal) {
 	myCities.push(cityVal);
 	console.log(myCities);
 	localStorage.setItem("city-name", JSON.stringify(myCities));
-	newCitiesButton();
+	newCitiesButton(cityVal);
 }
 
 //create a button for new search
@@ -148,9 +153,24 @@ function newCitiesButton(cityVal) {
 	const savedCitiesButton = document.createElement("button");
 	savedCitiesButton.className = "my-city-button";
 	savedCitiesButton.innerText = cityVal;
-	var placeButton = document.getElementById("cities-container");
-	savedCitiesButton.appendChild(placeButton);
+
+	placeButton.appendChild(savedCitiesButton);
 	console.log("button made");
 }
 
+cityBtnEl.addEventListener("click", function () {
+	var cityVal = cityNameEl.value;
+	getCityInfo(cityVal);
+	saveCityToStorage(cityVal);
+	//clear input field
+
+	console.log(cityNameEl);
+});
+placeButton.addEventListener("click", function (event) {
+	var element = event.target;
+	if (element.matches(".my-city-button")) {
+		let cityVal = element.textContent;
+		getCityInfo(cityVal);
+	}
+});
 //     <button id="[cityname]" class="savedCityBtn"></button>
