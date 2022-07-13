@@ -28,12 +28,6 @@ const getDate = () => {
 
 //format api url and get city lat & lon
 function getCityInfo(cityVal) {
-	if (myCities.indexOf(cityVal) !== -1) {
-		alert("City already saved in My Cities!");
-		cityNameEl = "";
-		return;
-	}
-
 	var apiUrl =
 		"https://api.openweathermap.org/geo/1.0/direct?q=" +
 		cityVal +
@@ -47,7 +41,7 @@ function getCityInfo(cityVal) {
 				getWeatherInfo(data[0].lat, data[0].lon, name);
 			});
 		} else {
-			alert("Error - city not found");
+			return;
 		}
 	});
 }
@@ -70,7 +64,7 @@ function getWeatherInfo(lat, lon, name) {
 				cityNameEl.value = "";
 			});
 		} else {
-			alert("lat and lon not found");
+			return;
 		}
 	});
 }
@@ -137,6 +131,10 @@ function DisplayFiveDay(data) {
 
 // saveCityToStorage(cityVal);
 function saveCityToStorage(cityVal) {
+	if (myCities.indexOf(cityVal) !== -1) {
+		cityNameEl.value = "";
+		return;
+	}
 	// push method to array
 	myCities.push(cityVal);
 
@@ -153,11 +151,10 @@ function newCitiesButton(cityVal) {
 	placeButton.appendChild(savedCitiesButton);
 }
 
-// function clearMyCities() {
-// 	localStorage.clear();
-// 	placeButton.innerHTML = "";
-// 	window.location.reload;
-// }
+function clearMyCities() {
+	localStorage.clear();
+	location.reload();
+}
 
 cityBtnEl.addEventListener("click", function () {
 	var cityVal = cityNameEl.value;
@@ -172,5 +169,6 @@ placeButton.addEventListener("click", function (event) {
 		getCityInfo(cityVal);
 	}
 });
-// var clearCities = document.querySelector("#clear-cities");
-// clearCities.addEventListener("click", clearMyCities);
+
+var clearCities = document.querySelector("#clear-cities");
+clearCities.addEventListener("click", clearMyCities);
